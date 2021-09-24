@@ -39,19 +39,18 @@ public Action OnPlayerRunCmd
         return Plugin_Continue;
     }
 
-    // only classify a player as "cloaked" if they have NO other conditions BESIDES
-    // cloaked or cloaked AND disguising
+    // they're a spy
     if (TF2_GetPlayerClass(client) == TFClass_Spy)
     {
         if
         (
-            GetPercentInvisible(client) >= 0.95
-            // && TF2_IsPlayerInCondition(client, TFCond_Cloaked)
-            // bumping into players
+            // they're mostly invis
+            GetPercentInvisible(client) >= 0.99
+            // not bumping into players
             && !TF2_IsPlayerInCondition(client, TFCond_CloakFlicker)
-            // cloak particles
+            // they dont have cloak particles
             && !TF2_IsPlayerInCondition(client, TFCond_Disguising)
-            // duh
+            // theyre not covered in piss or milk or bleeding
             && !TF2_IsPlayerInCondition(client, TFCond_Jarated)
             && !TF2_IsPlayerInCondition(client, TFCond_Milked)
             && !TF2_IsPlayerInCondition(client, TFCond_Bleeding)
@@ -82,6 +81,7 @@ public Action Hook_SetTransmit(int spy, int client)
 {
     if (clientTeam[spy] != clientTeam[client])
     {
+        SetEdictFlags(spy, (GetEdictFlags(spy) & ~FL_EDICT_ALWAYS));
         return Plugin_Handled
     }
     return Plugin_Continue;
